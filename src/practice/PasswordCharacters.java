@@ -44,6 +44,7 @@ public class PasswordCharacters {
 		return false;
 	}
 
+	
 	/**
 	 * This method generates a random password that is guaranteed to pass the
 	 * strength test

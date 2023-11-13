@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.util.Dictionary;
 
 /**
  * This class creates a JFrame that takes in user input in a text field and is able to determine the strength
@@ -39,35 +40,8 @@ public class Frame extends JFrame implements ActionListener {
 		includesCapitals = new JCheckBox("Includes Capitals", false);
 		lengthSlider = new JSlider(0, 20);
 
-		// Adding all necessary items to the length slider
-		// lengthSlider.addChangeListener((ChangeListener) this);
-		lengthSlider.setBounds(10, 200, 200, 60);
-		lengthSlider.setFont(myFont2);
-		lengthSlider.setFocusable(false);
-
-		// Setting up the check button
-		checkPassword.addActionListener(this);
-		checkPassword.setBounds(10, 500, 150, 60);
-		checkPassword.setFont(myFont2);
-		checkPassword.setFocusable(false);
-
-		// Setting up the includes capitals checkbox
-		includesCapitals.setBounds(10, 120, 250, 75);
-		includesCapitals.setFont(myFont2);
-		includesCapitals.setFocusable(false);
-
-		// Creating the visuals for the text frame
-		tf.setBounds(10, 60, 1170, 50);
-		tf.setFont(myFont);
-
-		// Creating a space for the label to represent the needed length
-		length.setBounds(215, 200, 200, 60);
-		length.setFont(myFont2);
-
-		// Creating the basis for the label above the text frame
-		label.setBounds(10, 10, 1170, 50);
-		label.setFont(myFont);
-
+		setFrameItems();
+		
 		// Adding objects to my action listener
 		this.add(includesCapitals);
 		this.add(checkPassword);
@@ -103,7 +77,8 @@ public class Frame extends JFrame implements ActionListener {
 			if (pc.checkPassword(getPassword(), neededLength, needsCapitals, needsSpecialCharacters)) {
 				tf.setText("You have passed!");
 			} else {
-				tf.setText("hmmm, I am unsure");
+				
+				tf.setText("Password is weak.");
 			}
 
 		}
@@ -117,6 +92,40 @@ public class Frame extends JFrame implements ActionListener {
 	 */
 	public String getPassword() {
 		return this.tf.getText();
+	}
+	/**
+	 * This method sets up the length slider
+	 * @param ls
+	 */
+	private void setFrameItems(){
+		// Setting up the check button
+		checkPassword.addActionListener(this);
+		checkPassword.setBounds(10, 500, 150, 60);
+		checkPassword.setFont(myFont2);
+		checkPassword.setFocusable(false);
+
+		// Setting up the includes capitals checkbox
+		includesCapitals.setBounds(10, 120, 250, 75);
+		includesCapitals.setFont(myFont2);
+		includesCapitals.setFocusable(false);
+
+		// Creating the visuals for the text frame
+		tf.setBounds(10, 60, 1170, 50);
+		tf.setFont(myFont);
+
+		// Creating a space for the label to represent the needed length
+		length.setBounds(215, 200, 200, 60);
+		length.setFont(myFont2);
+
+		// Creating the basis for the label above the text frame
+		label.setBounds(10, 10, 1170, 50);
+		label.setFont(myFont);
+
+		//Setting up the length slider
+		lengthSlider.setBounds(10, 200, 200, 60);
+		lengthSlider.setMajorTickSpacing(0);
+		lengthSlider.setFont(myFont2);
+		lengthSlider.setFocusable(false);
 	}
 
 }
