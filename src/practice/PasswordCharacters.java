@@ -11,7 +11,7 @@ public class PasswordCharacters {
 
 	/**
 	 * This checks the strength of the inputted password given
-	 * 
+	 * lkhjsdkfhkdsjfghkjshkjsdhksdj
 	 * @param password               is the inputted password
 	 * @param neededLength           is minimum length
 	 * @param needsCapitals          checks if capitals are needed
