@@ -17,13 +17,15 @@ public class PasswordCharacters {
 	 * @param needsCapitals          checks if capitals are needed
 	 * @param needsSpecialCharacters checks is special characters are needed
 	 */
-	public boolean checkPassword(String password, int neededLength, boolean needsCapitals,
-		boolean needsSpecialCharacters) {
+	public boolean checkPassword(String password, int neededLength, boolean needsCapitals,boolean needsSpecialCharacters) {
+		if(password.length()<7){
+			return false;
+		}
 		int points = (needsCapitals) ? 1 : 0;
 		points += (needsSpecialCharacters) ? 1 : 0;
 		int count = 0;
-		count += ((needsCapitals && contains(password, UPPERCASE)) ^ contains(password, UPPERCASE)) ? 1 : 0;
-		count += (needsSpecialCharacters && contains(password, SPECIAL_CHARACTERS) ^ contains(password, SPECIAL_CHARACTERS)) ? 1 : 0;
+		count += (contains(password, UPPERCASE)) ? 1 : 0;
+		count += (contains(password, SPECIAL_CHARACTERS)) ? 1 : 0;
 		return points <= count;
 	}
 
