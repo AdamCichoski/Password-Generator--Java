@@ -1,5 +1,4 @@
 package practice;
-
 public class PasswordCharacters {
 	private final String UPPERCASE = "ABCDEFGHIJKLMNOPQRZTUVWXYZ";
 	private final String SPECIAL_CHARACTERS = "~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/";
@@ -44,7 +43,7 @@ public class PasswordCharacters {
 		return false;
 	}
 
-	
+
 	/**
 	 * This method generates a random password that is guaranteed to pass the
 	 * strength test
@@ -53,8 +52,12 @@ public class PasswordCharacters {
 	 */
 	public String generatePassword() {
 		StringBuffer password = new StringBuffer();
-
-		return " ";
+		for(int i=0;i<6;i++){
+			password.append(UPPERCASE.charAt((int)(Math.random()*UPPERCASE.length()-1)));
+			password.append(SPECIAL_CHARACTERS.charAt((int)(Math.random()*8)+2));
+			password.append((char)((Math.random()*26)+97));
+		}
+		return password.toString();
 	}
 
 	/**
