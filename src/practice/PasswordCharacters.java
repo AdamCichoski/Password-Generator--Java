@@ -48,7 +48,7 @@ public class PasswordCharacters {
 	 * This method generates a random password that is guaranteed to pass the
 	 * strength test
 	 * 
-	 * @return
+	 * @return the password as a string
 	 */
 	public String generatePassword() {
 		StringBuffer password = new StringBuffer();
