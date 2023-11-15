@@ -20,27 +20,36 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 	private JSlider lengthSlider;
 	private JFrame frame;
 	private JTextField tf;
-	private JLabel label, length;
+	private JTextArea savedPasswords;
+	private JLabel label, length, saved;
 	private JButton checkPassword, generatePassword, reset;
 	private JCheckBox includesCapitals, includesSpecialChar;
 	private boolean needsCapitals = false, needsSpecialCharacters = false;
 	private int neededLength;
+	// private ImageIcon img = new ImageIcon(IMG_0370.jpg);
 
 	private Font myFont = new Font("Times new Roman", Font.BOLD, 30);
 	private Font myFont2 = new Font("Times new Roman", Font.BOLD, 20);
 
+	/**
+	 * Constructor to create the Frame 
+	 */
 	public Frame() {
+		frame.setIconImage(getIconImage());
 		// Initializing all objects and components that are in the frame
 		frame = new JFrame("Frame");
 		checkPassword = new JButton("Check");
 		generatePassword = new JButton("Generate Password");
 		reset = new JButton("Reset");
 		tf = new JTextField();
+		savedPasswords = new JTextArea();
 		label = new JLabel("Enter a password to test:");
 		length = new JLabel("0");
+		saved = new JLabel("Saved Passwords:");
 		includesCapitals = new JCheckBox("Includes Capitals", false);
 		includesSpecialChar = new JCheckBox("Includes Special Characters");
 		lengthSlider = new JSlider(0, 20);
+
 
 		setFrameItems();
 
@@ -53,6 +62,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 
 		// Setting up all needed speficications for the frame
 		frame.setSize(1200, 650);
+		frame.getContentPane().setBackground(Color.CYAN);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(null);
@@ -68,6 +78,8 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 		frame.add(generatePassword);
 		frame.add(reset);
 		frame.add(includesSpecialChar);
+		frame.add(savedPasswords);
+		frame.add(saved);
 	}
 
 	/**
@@ -85,6 +97,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 				this.needsSpecialCharacters = (includesSpecialChar.isSelected());
 				if (pc.checkPassword(getPassword(), neededLength, needsCapitals, needsSpecialCharacters)) {
 					tf.setEditable(false);
+					savedPasswords.setText(savedPasswords.getText()+"\n"+tf.getText());
 					tf.setText("Your password is strong!");
 				} else {
 					tf.setEditable(false);
@@ -151,6 +164,10 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 		tf.setBounds(10, 60, 1170, 50);
 		tf.setFont(myFont);
 
+		savedPasswords.setBounds(600,200,550,400);
+		savedPasswords.setEditable(false);
+		savedPasswords.setFont(myFont);
+
 		// Creating a space for the label to represent the needed length
 		length.setBounds(215, 200, 200, 60);
 		length.setFont(myFont2);
@@ -158,6 +175,9 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 		// Creating the basis for the label above the text frame
 		label.setBounds(10, 10, 1170, 50);
 		label.setFont(myFont);
+
+		saved.setBounds(600,160,250,50);
+		saved.setFont(myFont);
 
 		// Setting up the length slider
 		lengthSlider.addChangeListener(this);
@@ -179,5 +199,4 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 		reset.setFocusable(false);
 		reset.setFont(myFont2);
 	}
-
 }
