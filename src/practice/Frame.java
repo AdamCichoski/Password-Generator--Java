@@ -26,7 +26,8 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 	private JCheckBox includesCapitals, includesSpecialChar;
 	private boolean needsCapitals = false, needsSpecialCharacters = false;
 	private int neededLength;
-	// private ImageIcon img = new ImageIcon(IMG_0370.jpg);
+	private ImageIcon icon = new ImageIcon("IMGE_0370.png");
+	// private ImageIcon background = new ImageIcon();
 
 	private Font myFont = new Font("Times new Roman", Font.BOLD, 30);
 	private Font myFont2 = new Font("Times new Roman", Font.BOLD, 20);
@@ -35,7 +36,6 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 	 * Constructor to create the Frame 
 	 */
 	public Frame() {
-		frame.setIconImage(getIconImage());
 		// Initializing all objects and components that are in the frame
 		frame = new JFrame("Frame");
 		checkPassword = new JButton("Check");
@@ -50,7 +50,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 		includesSpecialChar = new JCheckBox("Includes Special Characters");
 		lengthSlider = new JSlider(0, 20);
 
-
+		
 		setFrameItems();
 
 		// Adding objects to my action listener
@@ -62,7 +62,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 
 		// Setting up all needed speficications for the frame
 		frame.setSize(1200, 650);
-		frame.getContentPane().setBackground(Color.CYAN);
+		// frame.getContentPane().setBackground(Color.CYAN);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(null);
@@ -144,6 +144,9 @@ public class Frame extends JFrame implements ActionListener, ChangeListener{
 	 * the frame
 	 */
 	private void setFrameItems() {
+		//Setting the frame icon image and setting the background to an image
+		frame.setIconImage(icon.getImage());
+
 		// Setting up the check button
 		checkPassword.addActionListener(this);
 		checkPassword.setBounds(10, 500, 150, 60);

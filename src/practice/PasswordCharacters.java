@@ -37,6 +37,9 @@ public class PasswordCharacters {
 	 * @return if the password contains any value in the index
 	 */
 	private boolean contains(String password, String index) {
+		if(password.indexOf(" ")>-1){
+			return false;
+		}
 		for (int i=0;i<index.length();i++){
 			if(password.indexOf(index.charAt(i))>-1){
 				return true;
