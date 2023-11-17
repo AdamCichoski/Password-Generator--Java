@@ -232,13 +232,20 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 			length.setText(lengthSlider.getValue() + "");
 		}
 	}
-
+	/**
+	 * This method adds a password button to the Password Storage JPanel
+	 * @param newPassword is a String of the password that passed the check 
+	 * @return the current password count
+	 */
 	private int addPassword(String newPassword){
 		if(savedPasswordCount>=11){
 			error("Password Storage Is Full!");
 			return -1;
 		}
 		passwordStorage.add((new JButton(newPassword))).setFocusable(false);
+		lengthSlider.setValue(lengthSlider.getValue()+1);
+		lengthSlider.setValue(lengthSlider.getValue()-1);
+
 		pack();
 		return ++savedPasswordCount;
 	}
