@@ -6,7 +6,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 
 /**
  * This class creates a JFrame that takes in user input in a text field and is
@@ -19,17 +18,16 @@ import java.awt.event.WindowEvent;
  */
 public class Frame extends JFrame implements ActionListener, ChangeListener {
 	private JSlider lengthSlider;
-	private JFrame frame, error;
-	private JTextField tf, deletePassword;
-	private JTextArea savedPasswords;
+	private JFrame frame;
+	private JTextField tf;
 	private JLabel label, length, saved;
-	private JButton checkPassword, generatePassword, reset, delete;
+	private JButton checkPassword, generatePassword, reset;
+	private JPanel passwordStorage;
 	private JCheckBox includesCapitals, includesSpecialChar;
 	private boolean needsCapitals = false, needsSpecialCharacters = false;
 	private int neededLength;
-	private String[] saves = new String[11];
-	private StringBuffer savedPasswordsText = new StringBuffer();
 
+	private int savedPasswordCount=0;
 	private Font myFont = new Font("Times new Roman", Font.BOLD, 30);
 	private Font myFont2 = new Font("Times new Roman", Font.BOLD, 20);
 
@@ -44,8 +42,8 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 		checkPassword = new JButton("Check");
 		generatePassword = new JButton("Generate Password");
 		reset = new JButton("Reset");
+		passwordStorage = new JPanel();
 		tf = new JTextField();
-		savedPasswords = new JTextArea();
 		label = new JLabel("Enter a password to test:");
 		length = new JLabel("0");
 		saved = new JLabel("Saved Passwords:");
@@ -84,14 +82,9 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 		frame.add(generatePassword);
 		frame.add(reset);
 		frame.add(includesSpecialChar);
-		frame.add(savedPasswords);
+		frame.add(passwordStorage);
 		frame.add(saved);
 
-		/****************************
-		 * Initalizing variables for the error frame
-		 */
-		deletePassword = new JTextField();
-		delete = new JButton("Delete");
 	}
 
 	/**
@@ -111,14 +104,11 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 			this.neededLength = lengthSlider.getValue();
 			this.needsCapitals = (includesCapitals.isSelected());
 			this.needsSpecialCharacters = (includesSpecialChar.isSelected());
-			if (pc.checkPassword(getPassword(tf), neededLength, needsCapitals, needsSpecialCharacters)) {
+			if (pc.checkPassword(getPassword(), neededLength, needsCapitals, needsSpecialCharacters)) {
 				tf.setEditable(false);
 				checkPassword.setEnabled(false);
-				if (addElement()) {
-					error("Password Overflow", "Choose a password to delete:");
-				}
-				savedPasswordsText.append(getPassword(tf) + "\n");
-				savedPasswords.setText(savedPasswordsText.toString());
+				addPassword(getPassword());
+				pack();
 				tf.setText("Your password is strong!");
 			} else {
 				tf.setEditable(false);
@@ -140,9 +130,6 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 			includesCapitals.setSelected(false);
 			tf.setEditable(true);
 			checkPassword.setEnabled(true);
-		}
-		if (e.getSource() == delete) {
-			deletePassword(getPassword(deletePassword));
 		}
 
 	}
@@ -180,12 +167,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 		tf.setBounds(10, 60, 1170, 50);
 		tf.setFont(myFont);
 
-		/***********************
-		 * Setting up the text area to hold saved passwords
-		 **********************/
-		savedPasswords.setBounds(600, 200, 550, 420);
-		savedPasswords.setEditable(false);
-		savedPasswords.setFont(myFont);
+		
 
 		/***********************
 		 * Setting up the label to show the needed length of a password
@@ -216,6 +198,13 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 		lengthSlider.setValue(0);
 
 		/***********************
+		 * Setting up the panel space to hold the saved passwords as buttons
+		 **********************/
+		passwordStorage.setBounds(600,200,400,400);
+		passwordStorage.setLayout(new GridLayout(11,1,30,0));
+		passwordStorage.setBackground(Color.GRAY);
+
+		/***********************
 		 * Setting up the generate password button
 		 **********************/
 		generatePassword.addActionListener(this);
@@ -233,85 +222,6 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 	}
 
 	/**
-	 * Throws an error message to alert that something went wrong
-	 * 
-	 * @param title is the title of the error frame
-	 * @param alert is the label that will be put on screen
-	 */
-	private void error(String title, String alert) {
-		checkPassword.setEnabled(false);
-		generatePassword.setEnabled(false);
-		JLabel errorMsg = new JLabel(alert);
-		error = new JFrame(title);
-
-		/******************** Creating the delete button **********************/
-		delete.setBounds(10, 120, 150, 50);
-		delete.setFont(myFont2);
-		delete.setFocusable(false);
-		delete.addActionListener(this);
-
-		/******************** Creating the error message lable ***************/
-		errorMsg.setBounds(10, 10, 300, 50);
-		errorMsg.setFont(myFont2);
-
-		/**************** Creating the deletePassword textfield ***************/
-		deletePassword.setBounds(10, 60, 460, 50);
-		deletePassword.setFont(myFont);
-		deletePassword.setFocusable(false);
-		deletePassword.setEditable(true);
-
-		/******************* Creating the error frame ********************/
-		error.setSize(500, 300);
-		error.setResizable(false);
-		error.setVisible(true);
-		error.getContentPane().setBackground(Color.PINK);
-		error.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		error.setLayout(null);
-		error.add(errorMsg);
-		error.add(deletePassword);
-		error.add(delete);
-	}
-
-	/**
-	 * This method takes in an input from the error frame and deletes it from the
-	 * saved passwords
-	 * 
-	 * @param input is the inputted password to delete
-	 * @return the new textfield
-	 */
-	private String deletePassword(String input) {
-		StringBuffer newText = new StringBuffer();
-		for (int i = 0; i < saves.length; i++) {
-			if (saves[i].equals(input)) {
-				saves[i] = null;
-				continue;
-			}
-			newText.append(saves[i] + "\n");
-		}
-		if (newText.equals(savedPasswordsText)) {
-			error.dispatchEvent(new WindowEvent(error, WindowEvent.WINDOW_CLOSING));
-			error("Password Delete Invalid", "Enter a passord to delete");
-		}
-		return newText.toString();
-	}
-
-	/**
-	 * This method adds an element to the saves String array for saved passwords
-	 * 
-	 * @return whether or not an element was added
-	 */
-	private boolean addElement() {
-		boolean elementAdded = false;
-		for (int i = 0; i < saves.length; i++) {
-			if (saves[i] == null) {
-				saves[i] = getPassword(tf);
-				elementAdded = true;
-			}
-		}
-		return elementAdded;
-	}
-
-	/**
 	 * This method is overriden from the ChangeListener interface
 	 * Items checked
 	 * Length slider (for password length)
@@ -323,12 +233,24 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 		}
 	}
 
+	private int addPassword(String newPassword){
+		if(savedPasswordCount>=11){
+			error("Password Storage Is Full!");
+			return -1;
+		}
+		passwordStorage.add((new JButton(newPassword))).setFocusable(false);
+		pack();
+		return ++savedPasswordCount;
+	}
 	/**
 	 * A method to more easily return the inputted password
 	 * 
 	 * @return the String in the text field
 	 */
-	public String getPassword(JTextField tf) {
+	public String getPassword() {
 		return tf.getText();
+	}
+	private void error(String alert){
+		tf.setText("ERROR: Password Storage Full");
 	}
 }
