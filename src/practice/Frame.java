@@ -22,12 +22,12 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 	private JTextField tf;
 	private JLabel label, length, saved;
 	private JButton checkPassword, generatePassword, reset;
-	private JPanel passwordStorage;
+	private JScrollPane scroll;
+	private JTextArea passwordStorage;
 	private JCheckBox includesCapitals, includesSpecialChar;
 	private boolean needsCapitals = false, needsSpecialCharacters = false;
 	private int neededLength;
 
-	private int savedPasswordCount=0;
 	private Font myFont = new Font("Times new Roman", Font.BOLD, 30);
 	private Font myFont2 = new Font("Times new Roman", Font.BOLD, 20);
 
@@ -42,7 +42,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 		checkPassword = new JButton("Check");
 		generatePassword = new JButton("Generate Password");
 		reset = new JButton("Reset");
-		passwordStorage = new JPanel();
+		passwordStorage = new JTextArea();
 		tf = new JTextField();
 		label = new JLabel("Enter a password to test:");
 		length = new JLabel("0");
@@ -84,6 +84,7 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 		frame.add(includesSpecialChar);
 		frame.add(passwordStorage);
 		frame.add(saved);
+		frame.add(scroll);
 
 	}
 
@@ -96,25 +97,16 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		PasswordCharacters pc = new PasswordCharacters();
+		this.neededLength = lengthSlider.getValue();
+		this.needsCapitals = (includesCapitals.isSelected());
+		this.needsSpecialCharacters = (includesSpecialChar.isSelected());
+		PasswordCharacters pc = new PasswordCharacters(getPassword(), this.neededLength, this.needsCapitals,
+				this.needsSpecialCharacters);
 		if (e.getSource() == lengthSlider) {
 			this.neededLength = lengthSlider.getValue();
 		}
 		if (e.getSource() == checkPassword) {
-			this.neededLength = lengthSlider.getValue();
-			this.needsCapitals = (includesCapitals.isSelected());
-			this.needsSpecialCharacters = (includesSpecialChar.isSelected());
-			if (pc.checkPassword(getPassword(), neededLength, needsCapitals, needsSpecialCharacters)) {
-				tf.setEditable(false);
-				checkPassword.setEnabled(false);
-				addPassword(getPassword());
-				pack();
-				tf.setText("Your password is strong!");
-			} else {
-				tf.setEditable(false);
-				checkPassword.setEnabled(false);
-				tf.setText("Password is weak.");
-			}
+			addPassword(getPassword(), pc.checkPassword());
 		}
 		if (e.getSource() == generatePassword) {
 			checkPassword.setEnabled(true);
@@ -128,10 +120,21 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 			this.lengthSlider.setValue(0);
 			includesSpecialChar.setSelected(false);
 			includesCapitals.setSelected(false);
-			tf.setEditable(true);
-			checkPassword.setEnabled(true);
+			passwordStorage.setText("");
 		}
 
+	}
+
+	/**
+	 * This method is overriden from the ChangeListener interface
+	 * Items checked
+	 * Length slider (for password length)
+	 */
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource() == lengthSlider) {
+			length.setText(lengthSlider.getValue() + "");
+		}
 	}
 
 	/**
@@ -167,8 +170,6 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 		tf.setBounds(10, 60, 1170, 50);
 		tf.setFont(myFont);
 
-		
-
 		/***********************
 		 * Setting up the label to show the needed length of a password
 		 **********************/
@@ -200,9 +201,10 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 		/***********************
 		 * Setting up the panel space to hold the saved passwords as buttons
 		 **********************/
-		passwordStorage.setBounds(600,200,400,400);
-		passwordStorage.setLayout(new GridLayout(11,1,30,0));
+		passwordStorage.setBounds(600, 200, 500, 400);
 		passwordStorage.setBackground(Color.GRAY);
+		passwordStorage.setFont(myFont2);
+		passwordStorage.setEditable(false);
 
 		/***********************
 		 * Setting up the generate password button
@@ -222,33 +224,18 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 	}
 
 	/**
-	 * This method is overriden from the ChangeListener interface
-	 * Items checked
-	 * Length slider (for password length)
-	 */
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		if (e.getSource() == lengthSlider) {
-			length.setText(lengthSlider.getValue() + "");
-		}
-	}
-	/**
 	 * This method adds a password button to the Password Storage JPanel
-	 * @param newPassword is a String of the password that passed the check 
+	 * 
+	 * @param inputtedPassword is a String of the password that passed the check
+	 * @param passedCheck      is whether or not the password passed the check
 	 * @return the current password count
 	 */
-	private int addPassword(String newPassword){
-		if(savedPasswordCount>=11){
-			error("Password Storage Is Full!");
-			return -1;
-		}
-		passwordStorage.add((new JButton(newPassword))).setFocusable(false);
-		lengthSlider.setValue(lengthSlider.getValue()+1);
-		lengthSlider.setValue(lengthSlider.getValue()-1);
-
-		pack();
-		return ++savedPasswordCount;
+	private void addPassword(String inputtedPassword, boolean passedCheck) {
+		String statement = (passedCheck) ? passwordStorage.getText() + "This password is strong!: " + getPassword()
+				: passwordStorage.getText() + "Password is weak.";
+		passwordStorage.setText(statement + "\n");
 	}
+
 	/**
 	 * A method to more easily return the inputted password
 	 * 
@@ -256,8 +243,5 @@ public class Frame extends JFrame implements ActionListener, ChangeListener {
 	 */
 	public String getPassword() {
 		return tf.getText();
-	}
-	private void error(String alert){
-		tf.setText("ERROR: Password Storage Full");
 	}
 }

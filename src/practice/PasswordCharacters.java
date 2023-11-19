@@ -1,12 +1,16 @@
 package practice;
 public class PasswordCharacters {
 	private final String UPPERCASE = "ABCDEFGHIJKLMNOPQRZTUVWXYZ";
-	private final String SPECIAL_CHARACTERS = "~`! @#$%^&*()_-+={[}]|\\:;\"'<,>.?/";
+	private final String SPECIAL_CHARACTERS = "~`!@#$%^&*()_-+={[}]|\\:;\"'<,>.?/";
 	private String password;
 	private boolean needsCapitals, needsSpecialCharacters;
+	private int neededLength;
 
-	public PasswordCharacters() {
-
+	public PasswordCharacters(String password, int neededLength, boolean needsCapitals,boolean needsSpecialCharacters) {
+		this.password = password;
+		this.needsCapitals = needsCapitals;
+		this.needsSpecialCharacters = needsSpecialCharacters;
+		this.neededLength = neededLength;
 	}
 
 	/**
@@ -17,8 +21,8 @@ public class PasswordCharacters {
 	 * @param needsCapitals          checks if capitals are needed
 	 * @param needsSpecialCharacters checks is special characters are needed
 	 */
-	public boolean checkPassword(String password, int neededLength, boolean needsCapitals,boolean needsSpecialCharacters) {
-		if(password.length()<7){
+	public boolean checkPassword() {
+		if(password.length()<7 || password.length()< neededLength){
 			return false;
 		}
 		int points = (needsCapitals) ? 1 : 0;
